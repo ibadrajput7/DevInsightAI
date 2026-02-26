@@ -3,9 +3,11 @@ from routers.users import router as user_router
 from routers.review import router as review_router
 from routers.report import router as report_router
 from middleware.profiling import performance_checker
+from middleware.rate_limit import rate_limiter
 
 app = FastAPI(title= 'DevInsight AI - Personal AI Code Insight Reviewer')
 
+app.middleware('http')(rate_limiter)
 app.middleware('http')(performance_checker)
 
 @app.get('/health')
