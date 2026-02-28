@@ -6,7 +6,6 @@ WINDOW_SIZE = 60
 
 
 async def is_allowed(user_id: str):
-
     try:
         current_window = int(time.time() / WINDOW_SIZE)
 
