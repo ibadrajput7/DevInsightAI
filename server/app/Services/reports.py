@@ -3,6 +3,7 @@ from database.models import CodeReview
 from sqlalchemy.ext.asyncio import AsyncSession
 from Services.caching import generate_key, get_cache, set_cache, delete_cache
 from core.redis_pool import redis_client
+from fastapi import HTTPException
 
 async def filtering_report_data(db: AsyncSession, user_id: int, report_id: int):
     cache_key = generate_key(user_id, report_id)
@@ -47,3 +48,18 @@ async def filtering_report_data(db: AsyncSession, user_id: int, report_id: int):
         
     await set_cache(redis_client, cache_key, report_data)
     return report_data
+
+
+async def get_all_report(db: AsyncSession, user_id: int):
+    try:
+        result = await db.execute(
+            select(CodeReview).where(CodeReview.user_id == user_id)
+        )
+        reports = result.scalars().all()
+
+        return reports 
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to fetch reports"
+        )
