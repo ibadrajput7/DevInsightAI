@@ -61,13 +61,13 @@ export function Navbar() {
             </button>
           )}
           <a
-            href="#"
+            href="/auth?mode=login"
             className="font-mono text-xs tracking-wider text-muted-foreground transition-colors hover:text-foreground"
           >
             LOG_IN
           </a>
           <a
-            href="#"
+            href="/auth?mode=signup"
             className="border border-primary bg-primary px-4 py-2 font-mono text-xs font-bold tracking-wider text-primary-foreground transition-colors hover:bg-primary/90"
           >
             GET STARTED
@@ -112,11 +112,11 @@ export function Navbar() {
               </Link>
             ))}
             <div className="mt-2 flex flex-col gap-2 border-t border-border pt-4">
-              <a href="#" className="py-2 font-mono text-xs tracking-wider text-muted-foreground">
+              <a href="/auth?mode=login" className="py-2 font-mono text-xs tracking-wider text-muted-foreground">
                 LOG_IN
               </a>
               <a
-                href="#"
+                href="/auth?mode=signup"
                 className="border border-primary bg-primary px-4 py-2 text-center font-mono text-xs font-bold tracking-wider text-primary-foreground"
               >
                 GET STARTED

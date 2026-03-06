@@ -1,3 +1,4 @@
+// app/page.tsx
 // import { Navbar } from "@/components/landing/navbar"
 import { HeroSection } from "@/components/landing/hero-section"
 import { TechTicker } from "@/components/landing/tech-ticker"
