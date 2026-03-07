@@ -15,6 +15,8 @@ class Setting(BaseSettings):
     ALLOWED_ORIGINS: str
     GOOGLE_CLIENT_ID : str
     GOOGLE_CLIENT_SECRET: str
+    GITHUB_CLIENT_ID: str
+    GITHUB_CLIENT_SECRET: str
     SESSION_SECRET_KEY: str
 
     model_config = SettingsConfigDict(

@@ -14,13 +14,13 @@ async def user_login(token: dict, db: AsyncSession) -> User:
                 detail="Invalid Google token: user info missing"
             )
 
-        google_id = user_info.get("sub")
+        provider_id = user_info.get("sub")
         email = user_info.get("email")
         name = user_info.get("name")
         picture = user_info.get("picture")
         email_verified = user_info.get("email_verified")
 
-        if not email or not google_id:
+        if not email or not provider_id:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid Google token payload"
@@ -34,7 +34,7 @@ async def user_login(token: dict, db: AsyncSession) -> User:
 
         # STEP 1: Check by google_id
         result = await db.execute(
-            select(User).where(User.google_id == google_id)
+            select(User).where(User.provider_id == provider_id)
         )
         user = result.scalar_one_or_none()
 
@@ -48,7 +48,7 @@ async def user_login(token: dict, db: AsyncSession) -> User:
         user = result.scalar_one_or_none()
 
         if user:
-            user.google_id = google_id
+            user.provider_id = provider_id
             user.avatar_url = picture
             user.auth_provider = "google"
 
@@ -61,7 +61,7 @@ async def user_login(token: dict, db: AsyncSession) -> User:
         new_user = User(
             name=name,
             email=email,
-            google_id=google_id,
+            provider_id=provider_id,
             avatar_url=picture,
             auth_provider="google",
             password=None

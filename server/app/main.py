@@ -8,6 +8,7 @@ from middleware.security_header import security_headers_middleware
 from middleware.cors_middleware import add_cors_middleware
 from middleware.session_middleware import add_session_middleware
 from routers.google_login import router as google_router
+from routers.github_login import router as github_router
 
 app = FastAPI(title= 'DevInsight AI - Personal AI Code Insight Reviewer')
 
@@ -25,3 +26,4 @@ app.include_router(user_router)
 app.include_router(review_router)
 app.include_router(report_router)
 app.include_router(google_router)
+app.include_router(github_router)
