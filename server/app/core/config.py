@@ -13,6 +13,9 @@ class Setting(BaseSettings):
     SMTP_PASSWORD: str
     OPENAI_API_KEY: str
     ALLOWED_ORIGINS: str
+    GOOGLE_CLIENT_ID : str
+    GOOGLE_CLIENT_SECRET: str
+    SESSION_SECRET_KEY: str
 
     model_config = SettingsConfigDict(
         env_file = BASE_DIR / "server/.env",
