@@ -17,21 +17,22 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100), nullable=False)
     email = Column(String(255), nullable=False, unique=True, index=True)
-    password = Column(String(255), nullable=False)
+    password = Column(String(255), nullable=True)  
+    google_id = Column(String(255), unique=True, nullable=True)
+    avatar_url = Column(String(500), nullable=True)
+    auth_provider = Column(String(50), default="local")
     role = Column(Enum(UserRole), default=UserRole.user, nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
+
     created_at = Column(
         DateTime(timezone=True),
         server_default=func.now(),
         nullable=False
     )
+
     code_reviews = relationship(
         "CodeReview",
         back_populates="user",
         cascade="all, delete-orphan",
         passive_deletes=True
     )
-    
-
-
-    
