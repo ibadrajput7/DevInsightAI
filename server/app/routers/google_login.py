@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import APIRouter, Request, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.db import get_db
 from core.google_oauth import oauth
@@ -14,10 +14,10 @@ async def login_google(request: Request):
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
 @router.get("/auth/google/callback")
-async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
+async def google_callback(request: Request, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db)):
     try:
         token = await oauth.google.authorize_access_token(request)
-        user = await user_login(token, db)
+        user = await user_login(token, db, background_tasks)
         access_token = create_access_token({'sub' : user.email})
         return {
             "access_token": access_token,
