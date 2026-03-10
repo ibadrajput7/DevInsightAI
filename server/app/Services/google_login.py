@@ -1,10 +1,11 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, BackgroundTasks
 from database.models.users import User
+from Services.email_sending import send_welcome_email
 
 
-async def user_login(token: dict, db: AsyncSession) -> User:
+async def user_login(token: dict, db: AsyncSession, background_tasks: BackgroundTasks) -> User:
     try:
         user_info = token.get("userinfo")
 
@@ -70,6 +71,7 @@ async def user_login(token: dict, db: AsyncSession) -> User:
         db.add(new_user)
         await db.commit()
         await db.refresh(new_user)
+        background_tasks.add_task(send_welcome_email, new_user.name, new_user.email)
 
         return new_user
 

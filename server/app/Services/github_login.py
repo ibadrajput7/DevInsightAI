@@ -2,10 +2,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from database.models import User
 from core.google_oauth import oauth
-from fastapi import HTTPException
+from fastapi import HTTPException, BackgroundTasks
+from Services.email_sending import send_welcome_email
 
 
-async def github_user_login(token: dict, db: AsyncSession):
+async def github_user_login(token: dict, background_tasks: BackgroundTasks, db: AsyncSession):
 
     # Get GitHub user info
     resp = await oauth.github.get("user", token=token)
@@ -64,5 +65,6 @@ async def github_user_login(token: dict, db: AsyncSession):
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)
+    background_tasks.add_task(send_welcome_email, new_user.name, new_user.email)
 
     return new_user

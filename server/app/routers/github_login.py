@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import APIRouter, Request, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.db import get_db
 from core.google_oauth import oauth
@@ -15,7 +15,7 @@ async def github_login(request: Request):
 
 
 @router.get("/auth/github/callback")
-async def github_callback(request: Request, db: AsyncSession = Depends(get_db)):
+async def github_callback(request: Request, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db)):
     try:
         token = await oauth.github.authorize_access_token(request)
 
