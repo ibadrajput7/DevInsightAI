@@ -149,7 +149,7 @@ export async function apiResetPassword(
 // ─── OAuth URLs ───────────────────────────────────────────────────────────────
 
 export const GOOGLE_LOGIN_URL = `${BASE_URL}/v1/user/auth/google/login`
-export const GITHUB_LOGIN_URL = `${BASE_URL}/v1/user/auth/github/login`
+export const GITHUB_LOGIN_URL = "http://127.0.0.1:8000/v1/user/auth/github/login"
 
 // ─── Report APIs ─────────────────────────────────────────────────────────────
 
