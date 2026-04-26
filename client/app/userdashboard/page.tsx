@@ -1,174 +1,150 @@
-// "use client"
-
-// import { useState } from "react"
-// import { DashboardOverview } from "@/components/dashbaord/overview"
-// import { GenerateReport } from "@/components/dashbaord/generate-report"
-// import { ReportsLibrary } from "@/components/dashbaord/report-library"
-// import { ReportViewer } from "@/components/dashbaord/report-viewer"
-// import { ChatBot } from "@/components/dashbaord/chatbot"
-// import { Settings } from "@/components/dashbaord/settings"
-// import type { Report } from "@/lib/types"
-
-// const SAMPLE_REPORTS: Report[] = [
-//   {
-//     id: "1",
-//     title: "React Performance Audit",
-//     topic: "Performance Optimization",
-//     source: "github",
-//     sourceUrl: "https://github.com/facebook/react",
-//     status: "completed",
-//     createdAt: "2026-03-01T10:30:00Z",
-//     summary:
-//       "Comprehensive analysis of React's rendering pipeline identifying optimization opportunities.",
-//     metrics: { files: 234, issues: 12, score: 87 },
-//   },
-// ]
-
-// export default function DashboardPage() {
-
-//   const [activeSection, setActiveSection] = useState("overview")
-//   const [reports, setReports] = useState<Report[]>(SAMPLE_REPORTS)
-//   const [selectedReport, setSelectedReport] = useState<Report | null>(null)
-
-//   const handleGenerateReport = (report: Report) => {
-//     setReports((prev) => [report, ...prev])
-//     setSelectedReport(report)
-//     setActiveSection("view-report")
-//   }
-
-//   const handleViewReport = (report: Report) => {
-//     setSelectedReport(report)
-//     setActiveSection("view-report")
-//   }
-
-//   const handleDeleteReport = (id: string) => {
-//     setReports((prev) => prev.filter((r) => r.id !== id))
-//   }
-
-//   const renderContent = () => {
-//     switch (activeSection) {
-//       case "overview":
-//         return (
-//           <DashboardOverview
-//             reports={reports}
-//             onViewReport={handleViewReport}
-//             onNavigate={setActiveSection}
-//           />
-//         )
-
-//       case "generate":
-//         return <GenerateReport onGenerate={handleGenerateReport} />
-
-//       case "reports":
-//         return (
-//           <ReportsLibrary
-//             reports={reports}
-//             onViewReport={handleViewReport}
-//             onDeleteReport={handleDeleteReport}
-//           />
-//         )
-
-//       case "view-report":
-//         return selectedReport ? (
-//           <ReportViewer
-//             report={selectedReport}
-//             onBack={() => setActiveSection("reports")}
-//           />
-//         ) : (
-//           <ReportsLibrary
-//             reports={reports}
-//             onViewReport={handleViewReport}
-//             onDeleteReport={handleDeleteReport}
-//           />
-//         )
-
-//       case "chatbot":
-//         return <ChatBot />
-
-//       case "settings":
-//         return <Settings />
-
-//       default:
-//         return (
-//           <DashboardOverview
-//             reports={reports}
-//             onViewReport={handleViewReport}
-//             onNavigate={setActiveSection}
-//           />
-//         )
-//     }
-//   }
-
-//   return <div className="w-full">{renderContent()}</div>
-// }
-
 "use client"
 
-import { DashboardOverview } from "@/components/dashbaord/overview"
+import { useEffect, useState } from "react"
+import { FileText, TrendingUp, AlertTriangle, Zap, ArrowRight, Clock } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Progress } from "@/components/ui/progress"
+import { apiGetReports } from "@/lib/api"
+import { useUser } from "@/hooks/useUser"
+import { mapApiReport } from "@/lib/types"
 import type { Report } from "@/lib/types"
-
-const SAMPLE_REPORTS: Report[] = [
-  {
-    id: "1",
-    title: "React Performance Audit",
-    topic: "Performance Optimization",
-    source: "github",
-    sourceUrl: "https://github.com/facebook/react",
-    status: "completed",
-    createdAt: "2026-03-01T10:30:00Z",
-    summary:
-      "Comprehensive analysis of React's rendering pipeline identifying optimization opportunities.",
-    metrics: { files: 234, issues: 12, score: 87 },
-  },
-  {
-    id: "2",
-    title: "Next.js SEO Audit",
-    topic: "SEO Optimization",
-    source: "github",
-    sourceUrl: "https://github.com/vercel/next.js",
-    status: "completed",
-    createdAt: "2026-03-02T12:45:00Z",
-    summary: "SEO best practices and meta tags analysis for your Next.js site.",
-    metrics: { files: 45, issues: 3, score: 92 },
-  },
-]
+import { useRouter } from "next/navigation"
 
 export default function DashboardPage() {
-  const handleNavigate = (section: string) => {
-    // Sidebar link ke equivalent pages par navigate karne ke liye
-    switch (section) {
-      case "generate":
-        window.location.href = "/userdashboard/generate-report"
-        break
-      case "reports":
-        window.location.href = "/userdashboard/my-report"
-        break
-      case "chatbot":
-        window.location.href = "/userdashboard/chatbot"
-        break
-      case "settings":
-        window.location.href = "/userdashboard/settings"
-        break
-      default:
-        window.location.href = "/userdashboard"
-        break
-    }
-  }
+  const router = useRouter()
+  const { user } = useUser()
+  const [reports, setReports] = useState<Report[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    apiGetReports()
+      .then((data) => setReports(data.map(mapApiReport)))
+      .catch(() => setReports([]))
+      .finally(() => setLoading(false))
+  }, [])
+
+  const completedReports = reports.filter((r) => r.status === "completed")
+  const avgScore = completedReports.length
+    ? Math.round(completedReports.reduce((acc, r) => acc + r.metrics.score, 0) / completedReports.length)
+    : 0
+  const totalIssues = completedReports.reduce((acc, r) => acc + r.metrics.issues, 0)
+  const totalFiles = completedReports.reduce((acc, r) => acc + r.metrics.files, 0)
+
+  const stats = [
+    { title: "Total Reports", value: reports.length.toString(), description: "All time generated", icon: FileText, color: "text-primary", bgColor: "bg-primary/10" },
+    { title: "Avg. Score", value: `${avgScore}%`, description: "Code health score", icon: TrendingUp, color: "text-chart-2", bgColor: "bg-chart-2/10" },
+    { title: "Issues Found", value: totalIssues.toString(), description: "Across all reports", icon: AlertTriangle, color: "text-chart-4", bgColor: "bg-chart-4/10" },
+    { title: "Files Analyzed", value: totalFiles.toLocaleString(), description: "Total files scanned", icon: Zap, color: "text-chart-5", bgColor: "bg-chart-5/10" },
+  ]
 
   const handleViewReport = (report: Report) => {
-    // Report details page ya modal handle karne ke liye
-    console.log("View report:", report)
-    // Agar alag page banaye to yahan redirect kar sakte ho
-    // window.location.href = `/userdashboard/my-report/${report.id}`
+    router.push(`/userdashboard/my-report?id=${report.id}`)
   }
 
   return (
-    <div className="w-full">
-      <DashboardOverview
-        reports={SAMPLE_REPORTS}
-        onViewReport={handleViewReport}
-        onNavigate={handleNavigate}
-      />
+    <div className="flex flex-col gap-6">
+      {/* Welcome banner */}
+      <div className="rounded-xl border border-border bg-card p-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent" />
+        <div className="relative">
+          <h2 className="text-2xl font-bold text-foreground text-balance">
+            Welcome back, {user?.name?.split(" ")[0] ?? "there"} 👋
+          </h2>
+          <p className="text-muted-foreground mt-1 max-w-lg">
+            Generate intelligent code analysis reports from your GitHub repositories or uploaded files. Get actionable insights powered by AI.
+          </p>
+          <Button
+            className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"
+            onClick={() => router.push("/userdashboard/generate-report")}
+          >
+            <Zap className="size-4 mr-2" />
+            Generate New Report
+          </Button>
+        </div>
+      </div>
+
+      {/* Stats grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map((stat) => (
+          <Card key={stat.title} className="bg-card border-border">
+            <CardContent className="p-5">
+              <div className="flex items-center justify-between">
+                <div className={`${stat.bgColor} rounded-lg p-2.5`}>
+                  <stat.icon className={`size-4 ${stat.color}`} />
+                </div>
+              </div>
+              <div className="mt-3">
+                <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                <p className="text-sm text-muted-foreground mt-0.5">{stat.title}</p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Recent reports */}
+      <Card className="bg-card border-border">
+        <CardHeader className="flex flex-row items-center justify-between pb-4">
+          <CardTitle className="text-foreground text-base font-semibold">Recent Reports</CardTitle>
+          <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" onClick={() => router.push("/userdashboard/my-report")}>
+            View All <ArrowRight className="size-3.5 ml-1" />
+          </Button>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3 pt-0">
+          {loading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4 rounded-lg border border-border bg-secondary/30 p-4 animate-pulse">
+                <div className="size-10 rounded-lg bg-primary/10 shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-secondary rounded w-48" />
+                  <div className="h-3 bg-secondary rounded w-32" />
+                </div>
+              </div>
+            ))
+          ) : reports.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              <FileText className="size-10 mx-auto mb-3 opacity-30" />
+              <p className="text-sm">No reports yet. Generate your first report!</p>
+              <Button className="mt-4 bg-primary text-primary-foreground" size="sm" onClick={() => router.push("/userdashboard/generate-report")}>
+                <Zap className="size-3.5 mr-1.5" /> Generate Report
+              </Button>
+            </div>
+          ) : (
+            reports.slice(0, 3).map((report) => (
+              <button
+                key={report.id}
+                onClick={() => handleViewReport(report)}
+                className="flex items-center gap-4 rounded-lg border border-border bg-secondary/30 p-4 hover:bg-secondary/60 transition-colors text-left w-full"
+              >
+                <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 shrink-0">
+                  <FileText className="size-4 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-medium text-foreground truncate">{report.title}</h3>
+                    <Badge variant="secondary" className="text-[10px] shrink-0 bg-chart-2/10 text-chart-2 border-0">
+                      {report.status}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-3 mt-1">
+                    <span className="text-xs text-muted-foreground">{report.topic}</span>
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Clock className="size-3" />
+                      {new Date(report.createdAt).toLocaleDateString("en-GB")}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end gap-1 shrink-0">
+                  <span className="text-sm font-semibold text-foreground">{report.metrics.score}%</span>
+                  <Progress value={report.metrics.score} className="w-16 h-1.5" />
+                </div>
+              </button>
+            ))
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }
