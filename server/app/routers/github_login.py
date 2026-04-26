@@ -7,13 +7,14 @@ from core.auth import create_access_token
 from Services.github_login import github_user_login
 
 FRONTEND_URL = "http://localhost:3000"
+BACKEND_URL = "http://127.0.0.1:8000"
 
 router = APIRouter(prefix="/v1/user", tags=["GitHub Login"])
 
 
 @router.get("/auth/github/login")
 async def github_login(request: Request):
-    redirect_uri = request.url_for("github_callback")
+    redirect_uri = f"{BACKEND_URL}/v1/user/auth/github/callback"
     return await oauth.github.authorize_redirect(request, redirect_uri)
 
 
