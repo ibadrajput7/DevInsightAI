@@ -22,7 +22,7 @@ class RiskSeverityDistribution(BaseModel):
 
 
 class ReportSchema(BaseModel):
-    id : int
+    id: Optional[int] = None
     project_title: str
     executive_summary: str
     technology_stack_understanding: str

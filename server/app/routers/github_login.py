@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Request, Depends, HTTPException, BackgroundTasks
+from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.db import get_db
 from core.google_oauth import oauth
 from core.auth import create_access_token
 from Services.github_login import github_user_login
+
+FRONTEND_URL = "http://localhost:3000"
 
 router = APIRouter(prefix="/v1/user", tags=["GitHub Login"])
 
@@ -23,13 +26,7 @@ async def github_callback(request: Request, background_tasks: BackgroundTasks, d
 
         access_token = create_access_token({"sub": user.email})
 
-        return {
-            "access_token": access_token,
-            "token_type": "bearer"
-        }
+        return RedirectResponse(url=f"{FRONTEND_URL}/auth/callback?token={access_token}")
 
     except Exception:
-        raise HTTPException(
-            status_code=400,
-            detail="GitHub authentication failed"
-        )
+        return RedirectResponse(url=f"{FRONTEND_URL}/auth?error=github_failed")
