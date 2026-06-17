@@ -103,6 +103,9 @@ B --> D[PostgreSQL]
 B --> E[Redis]
 B --> F[OAuth Services]
 B --> G[SMTP Email Service]
+```
+
+---
 
 ## 🧰 Tech Stack
 
@@ -229,6 +232,7 @@ DevInsightAI helps developers understand:
 It acts like a senior software engineer reviewing your code instantly.
 
 ---
+
 ## 📜 License
 
 MIT License
