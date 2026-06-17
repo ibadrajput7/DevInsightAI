@@ -104,95 +104,143 @@ B --> E[Redis]
 B --> F[OAuth Services]
 B --> G[SMTP Email Service]
 
-🧰 Tech Stack
-Backend
-Python
-FastAPI
-PostgreSQL
-Redis
-SQLAlchemy Async
-Frontend
-Next.js
-TypeScript
-Tailwind CSS
-AI & Auth
-OpenAI API
-GitHub OAuth
-Google OAuth
-SMTP Email
-DevOps
-Docker
-Docker Compose
-🚀 Getting Started
-Clone Repository
+## 🧰 Tech Stack
+
+### Backend
+- Python
+- FastAPI
+- PostgreSQL
+- Redis
+- SQLAlchemy Async
+
+### Frontend
+- Next.js
+- TypeScript
+- Tailwind CSS
+
+### AI & Authentication
+- OpenAI API
+- Google OAuth
+- GitHub OAuth
+- SMTP Email Service
+
+### DevOps
+- Docker
+- Docker Compose
+
+---
+
+## 🚀 Getting Started
+
+### Clone Repository
+
 git clone https://github.com/your-username/devinsightai.git
 cd devinsightai
-Setup Environment
+
+---
+
+### Environment Variables
+
+Create a .env file:
+
 DATABASE_URL=
 REDIS_URL=
 OPENAI_API_KEY=
+
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
+
 GITHUB_CLIENT_ID=
 GITHUB_CLIENT_SECRET=
+
 SMTP_HOST=
 SMTP_PORT=
 SMTP_USER=
 SMTP_PASS=
+
 SECRET_KEY=
-Run Project
+
+---
+
+### Run Project
+
 docker compose up --build
-📊 How It Works
-User logs in
-Selects GitHub repo or uploads ZIP
-Backend processes code
-AI generates report
-User views/downloads results
-🎯 Production Score
 
-Each project is analyzed based on:
+---
 
-Architecture quality
-Security risks
-Performance issues
-Database design
-Maintainability
+## 📊 How It Works
 
-Output: 0–100 score
+1. User logs in (Email / Google / GitHub)
+2. Selects GitHub repository or uploads ZIP file
+3. Backend processes full codebase
+4. AI generates structured engineering report
+5. User views or downloads results
 
-🚧 Roadmap
- GitHub repo analysis
- ZIP file analysis
- AI reports
- Report history
- Team dashboards
- PDF export
- PR review bot
- CI/CD integration
-📂 Project Structure
-server/
-client/
-docker-compose.yml/
+---
+
+## 🎯 Production Readiness Score
+
+Each project is evaluated based on:
+
+- Architecture quality
+- Security risks
+- Performance issues
+- Database design
+- Code maintainability
+
+Final output:
+👉 Score between 0–100
+
+---
+
+## 🚧 Roadmap
+
+- [x] GitHub repository analysis
+- [x] ZIP file analysis
+- [x] AI-generated engineering reports
+- [x] Report history system
+- [ ] Team collaboration dashboards
+- [ ] PDF export feature
+- [ ] PR review bot
+- [ ] CI/CD integration
+- [ ] Slack / Discord integration
+
+---
+
+## 📂 Project Structure
+
+backend/
+frontend/
+docker/
 assets/
 README.md
-💡 Why DevInsightAI?
+
+---
+
+## 💡 Why DevInsightAI?
 
 DevInsightAI helps developers understand:
 
-What is wrong in their code
-What to fix first
-How to improve architecture
-How production-ready their code is
+- What is wrong in their code
+- What to fix first
+- How to improve architecture
+- How production-ready their system is
 
-It acts like a senior engineer reviewing your code instantly.
+It acts like a senior software engineer reviewing your code instantly.
 
-📜 License
+---
+## 📜 License
 
-MIT
+MIT License
 
-📫 Contact
+---
+
+## 📫 Contact
+
 LinkedIn: https://www.linkedin.com/in/ibad-ur-rehman-rajput-69554433b/
 Email: ahmedibad0012@gmail.com
 Portfolio: https://ibadrajputportfolio.netlify.app/
 
-⭐ If you like this project, give it a star!
+---
+
+⭐ If you like this project, consider giving it a star!
